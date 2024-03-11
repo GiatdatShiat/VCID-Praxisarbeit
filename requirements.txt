@@ -1,0 +1,10 @@
+Flask
+Flask-Login
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-WTF
+Flask-Uploads
+python-dotenv
+SQLAlchemy
+psycopg2-binary
+Flask-Reuploaded
