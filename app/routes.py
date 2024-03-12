@@ -12,7 +12,7 @@ from urllib.parse import urlsplit
 @app.route('/index')
 @login_required
 def index():
-   user = {'username': 'Jochen'}
+   #user = {'username': 'Jochen'}
    posts = [
    {
    'author': {'username': 'Paul'},

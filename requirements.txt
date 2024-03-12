@@ -8,3 +8,5 @@ python-dotenv
 SQLAlchemy
 psycopg2-binary
 Flask-Reuploaded
+python-git
+Jinja2
