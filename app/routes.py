@@ -4,6 +4,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm
 from app.models import User, Photo
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_uploads import UploadSet, configure_uploads, IMAGES
 from urllib.parse import urlsplit
 
 
@@ -69,6 +70,7 @@ def register():
    # Route /register wurde mit GET betreten
    return render_template('register.html', title='Register', form=form)
 
+#Route zum Benutzerprofil
 @app.route('/user/<username>')
 @login_required
 def user(username):
@@ -80,10 +82,21 @@ def user(username):
    #Hier "Posts" wieder ersetzen!!
    return render_template('user.html', user=user, photo=photo)
 
+photos = UploadSet('photos', IMAGES)
 #Route für den Upload von Photos.
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
+    if request.method == 'POST' and 'photo' in request.files:
+        photos.save(request.files['photo'])
+        flash("Photo saved successfully.")
+        return render_template('upload.html')
+    return render_template('upload.html')
+
+
+
+
+'''def upload():
     if request.method == 'POST' and 'photo' in request.files:
         photo = request.files['photo']
         if photo:
@@ -97,4 +110,4 @@ def upload():
             return 'Foto hochgeladen! URL: {}'.format(photo_url)
         else:
             return 'Fehler beim Hochladen des Fotos.'
-    return render_template('upload.html')
+    return render_template('upload.html')'''

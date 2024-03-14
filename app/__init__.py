@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,7 +17,8 @@ login.login_view = 'login'
 
 # Konfiguration für den Foto-Upload
 photos = UploadSet('photos', IMAGES)
-app.config['UPLOADED_PHOTOS_DEST'] = 'static/uploads'
+app.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
+app.config["SECRET_KEY"] = os.urandom(24)
 configure_uploads(app, photos)
 
 from app import routes, models
