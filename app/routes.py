@@ -87,7 +87,7 @@ def user(username):
 def get_file(filename):
    return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
 
-
+#Foto hochladen. Code von hier: https://www.youtube.com/watch?v=dP-2NVUgh50
 @app.route("/upload", methods=['GET', 'POST'])
 def upload():
    form = UploadForm()
