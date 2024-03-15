@@ -1,11 +1,12 @@
 # app/routes.py
-from flask import render_template, flash, redirect, url_for, request
+import os
+from flask import render_template, flash, redirect, url_for, request, url_for, send_from_directory
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, UploadForm
 from app.models import User, Photo
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_uploads import UploadSet, configure_uploads, IMAGES
 from urllib.parse import urlsplit
+from app import photos
 
 
 #Route zur Hauptseite
@@ -82,32 +83,17 @@ def user(username):
    #Hier "Posts" wieder ersetzen!!
    return render_template('user.html', user=user, photo=photo)
 
-photos = UploadSet('photos', IMAGES)
-#Route für den Upload von Photos.
-@app.route('/upload', methods=['GET', 'POST'])
-@login_required
+@app.route('/uploads/<filename>')
+def get_file(filename):
+   return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
+
+
+@app.route("/upload", methods=['GET', 'POST'])
 def upload():
-    if request.method == 'POST' and 'photo' in request.files:
-        photos.save(request.files['photo'])
-        flash("Photo saved successfully.")
-        return render_template('upload.html')
-    return render_template('upload.html')
-
-
-
-
-'''def upload():
-    if request.method == 'POST' and 'photo' in request.files:
-        photo = request.files['photo']
-        if photo:
-            filename = photo.save('static/uploads')
-            # Speichere die Foto-Referenz in der Datenbank
-            user_id = current_user.id
-            photo_ref = Photo(filename=filename, user_id=user_id)
-            db.session.add(photo_ref)
-            db.session.commit()
-            photo_url = url_for('static', filename='uploads/' + filename)
-            return 'Foto hochgeladen! URL: {}'.format(photo_url)
-        else:
-            return 'Fehler beim Hochladen des Fotos.'
-    return render_template('upload.html')'''
+   form = UploadForm()
+   if form.validate_on_submit():
+      filename = photos.save(form.photo.data)
+      file_url = url_for('get_file', filename=filename)
+   else:
+      file_url = None
+   return render_template('upload.html', form=form, file_url=file_url)

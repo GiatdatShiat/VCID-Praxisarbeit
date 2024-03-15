@@ -1,7 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import data_required, ValidationError, Email, EqualTo
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+from flask_uploads import UploadSet, configure_uploads, IMAGES
 from app.models import User
+from app import photos
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[data_required()])
@@ -27,3 +30,12 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Es existiert bereits ein Konto mit dieser Mail-Adresse. Bitte wähle eine andere.')
+        
+class UploadForm(FlaskForm):
+    photo = FileField(
+        validators=[
+            FileAllowed(photos, 'Nur Bilder sind erlaubt.'),
+            FileRequired('Bitte wähle eine Bilddatei aus, die du hochladen möchtest.')
+        ]
+    )
+    submit = SubmitField('Hochladen')
