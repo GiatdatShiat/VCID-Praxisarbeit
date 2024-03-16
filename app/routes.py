@@ -76,6 +76,7 @@ def get_file(filename):
 
 #Foto hochladen. Code von hier: https://www.youtube.com/watch?v=dP-2NVUgh50
 @app.route("/upload", methods=['GET', 'POST'])
+@login_required
 def upload():
    form = UploadForm()
    if form.validate_on_submit():
@@ -86,6 +87,7 @@ def upload():
    return render_template('upload.html', form=form, file_url=file_url)
 
 @app.route('/gallery')
+@login_required
 def gallery():
     image_names = send_from_directory()
     print(image_names)
