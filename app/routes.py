@@ -91,6 +91,6 @@ def upload():
 @login_required
 def gallery():
     #image_names = os.listdir('bilder')
-    image_names = os.listdir('/home/img')
+    image_names = os.listdir('home/img')
     print(image_names)
     return render_template("gallery.html", image_names=image_names)
