@@ -1,4 +1,5 @@
 # app/routes.py
+import os
 from flask import render_template, flash, redirect, url_for, request, url_for, send_from_directory
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, UploadForm
@@ -70,7 +71,7 @@ def user(username):
    #Hier "Posts" wieder ersetzen!!
    return render_template('user.html', user=user, photo=photo)
 
-@app.route('/uploads/<filename>')
+@app.route('/bilder/<filename>')
 def get_file(filename):
    return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
 
@@ -89,6 +90,6 @@ def upload():
 @app.route('/gallery')
 @login_required
 def gallery():
-    image_names = send_from_directory()
+    image_names = os.listdir('bilder')
     print(image_names)
     return render_template("gallery.html", image_names=image_names)
