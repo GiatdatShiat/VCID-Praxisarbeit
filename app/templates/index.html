@@ -1,10 +1,6 @@
 <!-- app/templates/index.html -->
 {% extends "base.html" %}
-
 {% block content %}
     <h1>Hei {{ current_user.username }}!</h1>
-    {% for post in posts %}
-    <!--unbedingt anpassen hier!-->
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-    {% endfor %}
+    <p> Willkommen auf deinem Profil! Hier siehst du eine Übersicht über die Fotos, die du hochgeladen hast.</p>
 {% endblock %}

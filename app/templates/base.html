@@ -17,6 +17,7 @@
             {% else %}
             <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
             <a href="{{ url_for('upload')}}">Upload</a>
+            <a href="{{ url_for('gallery')}}">Gallery</a>
             <a href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
          </div>

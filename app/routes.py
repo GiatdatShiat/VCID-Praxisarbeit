@@ -1,9 +1,8 @@
 # app/routes.py
-import os
 from flask import render_template, flash, redirect, url_for, request, url_for, send_from_directory
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, UploadForm
-from app.models import User, Photo
+from app.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 from urllib.parse import urlsplit
 from app import photos
@@ -14,19 +13,7 @@ from app import photos
 @app.route('/index')
 @login_required
 def index():
-   #user = {'username': 'Jochen'}
-   posts = [
-   {
-   'author': {'username': 'Paul'},
-   'body': 'Schöner Abend hier in Zürich!'
-   },
-   {
-   'author': {'username': 'Susanne'},
-   'body': 'Der Unterricht war heute mal gut!'
-   }
-   ]
-
-   return render_template('index.html', title='Home', posts=posts)
+   return render_template('index.html', title='Home')
 
 #Route zur Login Seite
 @app.route('/login', methods=['GET', 'POST'])
@@ -97,3 +84,9 @@ def upload():
    else:
       file_url = None
    return render_template('upload.html', form=form, file_url=file_url)
+
+@app.route('/gallery')
+def gallery():
+    image_names = send_from_directory()
+    print(image_names)
+    return render_template("gallery.html", image_names=image_names)
