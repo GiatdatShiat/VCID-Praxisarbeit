@@ -28,4 +28,4 @@ app.config["UPLOADED_PHOTOS_DEST"] = "/home/img"
 app.config["SECRET_KEY"] = os.urandom(24)
 configure_uploads(app, photos)
 
-from app import routes, models
+from app import routes, models, api

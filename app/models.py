@@ -1,3 +1,4 @@
+from flask import url_for
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,7 +10,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.VARCHAR(30), unique=True, index=True)
     password_hash = db.Column(db.VARCHAR(256))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    #Hier ev. backref aus seite 66 einfügen, siehe beispiel mit Posts
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -20,6 +21,27 @@ class User(db.Model, UserMixin):
     #Check gehashtes Password
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    #Aufbereitung der Daten für API-Abfrage
+    def to_dict(self, include_email=False):
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'last_seen': self.last_seen,
+            'created_at': self.created_at,
+            '_links': {
+                'self': url_for('get_user', id=self.id),
+            }
+        }
+        if include_email:
+            data['email'] = self.email
+        return data
+    #Alle Benutzer abfragen
+    @staticmethod
+    def to_collection():
+        users = User.query.all()
+        data = {'items': [item.to_dict() for item in users]}
+        return data
 
 #User aus der Datenbank lesen, damit Flask-Login den User tracken kann.
 @login.user_loader
@@ -38,6 +60,26 @@ class Photo(db.Model):
 
     def __repr__(self):
         return '<Photo {}>'.format(self.file_path)
+    
+    #Aufbereitung der Daten für API-Abfrage
+    def to_dict(self):
+        data = {
+            'id': self.id,
+            'user_id': self.user_id,
+            'filename': self.filename,
+            'filepath': self.filepath,
+            'upload_date': self.upload_date,
+            '_links': {
+                'self': url_for('get_photos', id=self.id),
+            }
+        }
+        return data
+    #Alle Benutzer abfragen
+    @staticmethod
+    def to_collection():
+        photos = Photo.query.all()
+        data = {'items': [item.to_dict() for item in photos]}
+        return data
 
 class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)

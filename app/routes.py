@@ -3,9 +3,10 @@ import os
 from flask import render_template, flash, redirect, url_for, request, url_for, send_from_directory
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, UploadForm
-from app.models import User
+from app.models import User, Photo
 from flask_login import login_user, current_user, logout_user, login_required
 from urllib.parse import urlsplit
+from datetime import datetime
 from app import photos
 
 
@@ -26,10 +27,11 @@ def login():
       # Route /login wurde mit POST betreten. Prüfung, ob alles o.k. ist:
       user = User.query.filter_by(username=form.username.data).first()
       if user is None or not user.check_password(form.password.data):
-         flash('Invalid username or password')
+         flash('Ungültiger Benutzername oder Passwort')
          return redirect(url_for('login'))
       # Alles o.k., Login kann erfolgen
       login_user(user, remember=form.remember_me.data)
+      print(current_user.id)
       next_page = request.args.get('next')
       if not next_page or urlsplit(next_page).netloc != '':
          next_page = url_for('index')
@@ -54,7 +56,7 @@ def register():
       user.set_password(form.password.data)
       db.session.add(user)
       db.session.commit()
-      flash('Congratulations, you are now a registered user!')
+      flash('Gratuliere, du hast dich erfolgreich registriert!')
       return redirect(url_for('login'))
    # Route /register wurde mit GET betreten
    return render_template('register.html', title='Register', form=form)
@@ -83,6 +85,9 @@ def upload():
    if form.validate_on_submit():
       filename = photos.save(form.photo.data)
       file_url = url_for('get_file', filename=filename)
+      photo = Photo(user_id=current_user.id, filename=filename, filepath=file_url)
+      db.session.add(photo)
+      db.session.commit()
    else:
       file_url = None
    return render_template('upload.html', form=form, file_url=file_url)
@@ -90,7 +95,15 @@ def upload():
 @app.route('/gallery')
 @login_required
 def gallery():
-    #image_names = os.listdir('bilder')
-    image_names = os.listdir('/home/img')
-    print(image_names)
-    return render_template("gallery.html", image_names=image_names)
+   #image_names = os.listdir('bilder')
+   image_names = os.listdir('/home/img')
+   print(image_names)
+   return render_template("gallery.html", image_names=image_names)
+
+#Last_seen abfüllen
+@app.before_request
+def before_request():
+   if current_user.is_authenticated:
+      current_user.last_seen = datetime.utcnow()
+      db.session.commit()
+
