@@ -31,7 +31,6 @@ def login():
          return redirect(url_for('login'))
       # Alles o.k., Login kann erfolgen
       login_user(user, remember=form.remember_me.data)
-      print(current_user.id)
       next_page = request.args.get('next')
       if not next_page or urlsplit(next_page).netloc != '':
          next_page = url_for('index')
