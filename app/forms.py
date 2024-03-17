@@ -6,18 +6,18 @@ from app.models import User
 from app import photos
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[data_required()])
-    password = PasswordField('Password', validators=[data_required()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+    username = StringField('Benutzername', validators=[data_required()])
+    password = PasswordField('Passwort', validators=[data_required()])
+    remember_me = BooleanField('Eingeloggt bleiben')
+    submit = SubmitField('Anmelden')
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[data_required()])
+    username = StringField('Benutzername', validators=[data_required()])
     email = StringField('Email', validators=[data_required(), Email()])
-    password = PasswordField('Password', validators=[data_required()])
+    password = PasswordField('Passwort', validators=[data_required()])
     password2 = PasswordField(
-        'Repeat Password', validators=[data_required(), EqualTo('password')])
-    submit = SubmitField('Register')
+        'Passwort wiederholen', validators=[data_required(), EqualTo('password')])
+    submit = SubmitField('Registrieren')
 
     #Überprüfung der Benutzernamen und Email-Adressen auf Eindeutigkeit.
     def validate_username(self, username):
