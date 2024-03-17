@@ -8,7 +8,7 @@
         {{image_names}}
         <hr>
         {% for image_name in image_names %}
-        <br>{{ image_name}}</br>
+        <br>{{ image_name }}</br>
                 <img src="{{ url_for('get_file', filename=image_name) }}" alt="{{ image_name }}" style ="width: 400px;">
         <p></p>
         {% endfor %}

@@ -3,9 +3,10 @@
     <h1>Benutzer: {{ user.username }}</h1>
     {% if user.last_seen %}<p> Zuletzt online am: {{ user.last_seen }}</p>{% endif %}
     <hr>
-    {% for photo in photos %}
-    <p>
-    {{ post.author.username }} says: <b>{{ post.body }}</b>
-    </p>
-    {% endfor %}
+    <p>Hier hast du eine Übersicht all deiner hochgeladenen Fotos.</p>
+    <div>
+        {% for photo in photos %}
+            <img src="{{ photo.filepath }}" alt="Photo" style ="width: 400px;">
+        {% endfor %}
+    </div>
 {% endblock %}

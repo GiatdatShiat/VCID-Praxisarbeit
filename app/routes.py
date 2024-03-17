@@ -65,12 +65,9 @@ def register():
 @login_required
 def user(username):
    user = User.query.filter_by(username=username).first_or_404()
-   photo = [
-      {'author': user, 'body': 'Test post #1'},
-      {'author': user, 'body': 'Test post #1'},
-   ]
-   #Hier "Posts" wieder ersetzen!!
-   return render_template('user.html', user=user, photo=photo)
+   # Fotos des Benutzers aus der Datenbank abrufen
+   photos = Photo.query.filter_by(user_id=user.id).all()
+   return render_template('user.html', user=user, photos=photos)
 
 @app.route('/bilder/<filename>')
 def get_file(filename):
@@ -94,7 +91,6 @@ def upload():
 @app.route('/gallery')
 @login_required
 def gallery():
-   #image_names = os.listdir('bilder')
    image_names = os.listdir('/home/img')
    print(image_names)
    return render_template("gallery.html", image_names=image_names)
