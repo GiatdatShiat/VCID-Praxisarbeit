@@ -3,7 +3,7 @@
     <h1>Benutzer: {{ user.username }}</h1>
     {% if user.last_seen %}<p> Zuletzt online am: {{ user.last_seen }}</p>{% endif %}
     <hr>
-    <p>Hier hast du eine Übersicht all deiner hochgeladenen Fotos.</p>
+    <p>Willkommen auf deinem Profil! Hier siehst du eine Übersicht über die Fotos, die du hochgeladen hast.</p>
     <div>
         {% for photo in photos %}
             <img src="{{ photo.filepath }}" alt="Photo" style ="width: 400px;">
