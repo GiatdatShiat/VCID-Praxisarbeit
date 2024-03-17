@@ -10,3 +10,4 @@ psycopg2-binary
 Flask-Reuploaded
 python-git
 Jinja2
+email_validator
