@@ -70,7 +70,7 @@ class Photo(db.Model):
             'filepath': self.filepath,
             'upload_date': self.upload_date,
             '_links': {
-                'self': url_for('get_photos', id=self.id),
+                'self': url_for('get_photo', id=self.id),
             }
         }
         return data

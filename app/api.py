@@ -12,6 +12,11 @@ def get_users():
     data = User.to_collection()
     return jsonify(data)
 
+@app.route('/api/photos/<int:id>', methods=['GET'])
+def get_photo(id):
+    data = Photo.query.get_or_404(id).to_dict()
+    return jsonify(data)
+
 @app.route('/api/photos', methods=['GET'])
 def get_photos():
     data = Photo.to_collection()
