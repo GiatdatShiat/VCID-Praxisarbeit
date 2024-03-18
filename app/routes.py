@@ -122,7 +122,8 @@ def rate_photo_in_gallery(photo_id):
 
         try:
             db.session.commit()
-            flash('Vielen Dank für deine Bewertung!', 'success')
+            flash_message = 'Vielen Dank für deine Bewertung! <a href="{}" class="btn btn-primary">Zurück zur Galerie</a>'.format(url_for('gallery'))
+            flash(Markup(flash_message), 'success')
         except IntegrityError:
             db.session.rollback()
             flash('Ein Fehler ist aufgetreten. Bitte versuche es erneut.', 'error')
