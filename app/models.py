@@ -1,6 +1,7 @@
 from flask import url_for
 from datetime import datetime
 from flask_login import UserMixin
+from sqlalchemy import func, UniqueConstraint
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login
 
@@ -11,6 +12,9 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.VARCHAR(256))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+
+    photos = db.relationship('Photo', backref='user', lazy=True)
+    ratings = db.relationship('Rating', backref='user', lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -58,6 +62,11 @@ class Photo(db.Model):
     upload_date = db.Column(db.DateTime, default=datetime.utcnow)
     average_rating = db.Column(db.Integer)
 
+    ratings = db.relationship('Rating', backref='photo', lazy=True)
+
+    def average_rating_score(self):
+        return db.session.query(func.avg(Rating.rating)).filter(Rating.photo_id == self.id).scalar() or 0
+
     def __repr__(self):
         return '<Photo {}>'.format(self.file_path)
     
@@ -87,6 +96,11 @@ class Rating(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     rating = db.Column(db.Integer)
     date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    #Benutzer dürfen Foto nur einmal bewerten!
+    __table_args__ = (
+        UniqueConstraint('user_id', 'photo_id', name='_user_photo_uc'),
+    )
 
     def __repr__(self):
         return '<Rating {}>'.format(self.rating)

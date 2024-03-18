@@ -1,16 +1,22 @@
+<!-- gallery.html -->
+
 {% extends "base.html" %}
 {% block app_content %}
 <div class="container">
     <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">Gallerie</h1>
+        {% for image in images %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <a href="{{ url_for('rate_photo_in_gallery', photo_id=image.id) }}">
+                    <img class="card-img-top" src="{{ url_for('get_file', filename=image.filename) }}" alt="{{ image.filename }}" style="width: 100%; max-height: 400px;">
+                </a>
+                <div class="card-body">
+                    <p class="card-text">Benutzername: {{ image.user.username }}</p>
+                    <p class="card-text">Bild: {{ image.filename }}</p>
+                    <p class="card-text">Durchschnittliche Bewertung: {{ image.average_rating_score() }}</p>
+                </div>
+            </div>
         </div>
-        {{image_names}}
-        <hr>
-        {% for image_name in image_names %}
-        <br>{{ image_name }}</br>
-                <img src="{{ url_for('get_file', filename=image_name) }}" alt="{{ image_name }}" style ="width: 400px;">
-        <p></p>
         {% endfor %}
     </div>
 </div>
