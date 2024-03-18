@@ -108,26 +108,24 @@ def before_request():
 @app.route('/gallery/<int:photo_id>/rate', methods=['GET', 'POST'])
 @login_required
 def rate_photo_in_gallery(photo_id):
-    selected_image = Photo.query.get_or_404(photo_id)
+   selected_image = Photo.query.get_or_404(photo_id)
 
-    if request.method == 'POST':
-        if Rating.query.filter_by(user_id=current_user.id, photo_id=photo_id).first():
-            flash_message = 'Du hast dieses Foto bereits bewertet! <a href="{}" class="btn btn-primary">Zurück zur Galerie</a>'.format(url_for('gallery'))
-            flash(Markup(flash_message), 'error')
-            return redirect(url_for('rate_photo_in_gallery', photo_id=photo_id))
+   if request.method == 'POST':
+      if Rating.query.filter_by(user_id=current_user.id, photo_id=photo_id).first():
+         flash_message = 'Du hast dieses Foto bereits bewertet! <a href="{}" class="btn btn-primary">Zurück zur Galerie</a>'.format(url_for('gallery'))
+         flash(Markup(flash_message), 'error')
+         return redirect(url_for('rate_photo_in_gallery', photo_id=photo_id))
 
-        rating_value = int(request.form['rating'])
-        rating = Rating(user_id=current_user.id, photo_id=photo_id, rating=rating_value)
-        db.session.add(rating)
+      rating_value = int(request.form['rating'])
+      rating = Rating(user_id=current_user.id, photo_id=photo_id, rating=rating_value)
+      db.session.add(rating)
 
-        try:
-            db.session.commit()
-            flash_message = 'Vielen Dank für deine Bewertung! <a href="{}" class="btn btn-primary">Zurück zur Galerie</a>'.format(url_for('gallery'))
-            flash(Markup(flash_message), 'success')
-        except IntegrityError:
-            db.session.rollback()
-            flash('Ein Fehler ist aufgetreten. Bitte versuche es erneut.', 'error')
-
-        return redirect(url_for('rate_photo_in_gallery', photo_id=photo_id))
-
-    return render_template('rate_photo_in_gallery.html', selected_image=selected_image)
+      try:
+         db.session.commit()
+         flash_message = 'Vielen Dank für deine Bewertung! <a href="{}" class="btn btn-primary">Zurück zur Galerie</a>'.format(url_for('gallery'))
+         flash(Markup(flash_message), 'success')
+      except IntegrityError:
+         db.session.rollback()
+         flash('Ein Fehler ist aufgetreten. Bitte versuche es erneut.', 'error')
+      return redirect(url_for('rate_photo_in_gallery', photo_id=photo_id))
+   return render_template('rate_photo_in_gallery.html', selected_image=selected_image)
