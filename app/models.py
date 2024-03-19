@@ -1,5 +1,5 @@
 from flask import url_for
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_login import UserMixin
 from sqlalchemy import func, UniqueConstraint
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,8 +10,8 @@ class User(db.Model, UserMixin):
     username = db.Column(db.VARCHAR(30), unique=True, index=True)
     email = db.Column(db.VARCHAR(30), unique=True, index=True)
     password_hash = db.Column(db.VARCHAR(256))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    last_seen = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     photos = db.relationship('Photo', backref='user', lazy=True)
     ratings = db.relationship('Rating', backref='user', lazy=True)
@@ -59,7 +59,7 @@ class Photo(db.Model):
     filename = db.Column(db.VARCHAR(255))
     filepath = db.Column(db.VARCHAR(255))
     filesize = db.Column(db.Integer)
-    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
+    upload_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     average_rating = db.Column(db.Integer)
 
     ratings = db.relationship('Rating', backref='photo', lazy=True)
@@ -95,7 +95,7 @@ class Rating(db.Model):
     photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     rating = db.Column(db.Integer)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     #Benutzer dürfen Foto nur einmal bewerten!
     __table_args__ = (
@@ -110,7 +110,7 @@ class Comment(db.Model):
     photo_id = db.Column(db.Integer, db.ForeignKey('photo.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     comment = db.Column(db.Text)
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return '<Comment {}>'.format(self.comment)
