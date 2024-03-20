@@ -22,7 +22,7 @@ bootstrap = Bootstrap(app)
 
 # Konfiguration für den Foto-Upload
 photos = UploadSet("photos", IMAGES)
-#app.config["UPLOADED_PHOTOS_DEST"] = "bilder"
+#app.config["UPLOADED_PHOTOS_DEST"] = "bilder" - Für Testzwecke lokal zu verwenden.
 app.config["UPLOADED_PHOTOS_DEST"] = "/home/img"
 #Secret Key für Bild-Upload
 app.config["SECRET_KEY"] = os.urandom(24)

@@ -12,26 +12,26 @@ from sqlalchemy.exc import IntegrityError
 from app import photos
 
 
-#Route zur Hauptseite
+#Route zur Indexseite
 @app.route('/')
 @app.route('/index')
 @login_required
 def index():
    return render_template('index.html', title='Home')
 
-#Route zur Login Seite
+#Route zur Login Seite (Quelle: Tutorial Webapplikation mit Flask)
 @app.route('/login', methods=['GET', 'POST'])
 def login():
    if current_user.is_authenticated:
       return redirect(url_for('index'))
    form = LoginForm()
    if form.validate_on_submit():
-      # Route /login wurde mit POST betreten. Prüfung, ob alles o.k. ist:
+      #Route /login wurde mit POST betreten. Prüfung, ob alles ok ist.
       user = User.query.filter_by(username=form.username.data).first()
       if user is None or not user.check_password(form.password.data):
          flash('Ungültiger Benutzername oder Passwort')
          return redirect(url_for('login'))
-      # Alles o.k., Login kann erfolgen
+      #Alles ok, das Login kann erfolgen.
       login_user(user, remember=form.remember_me.data)
       next_page = request.args.get('next')
       if not next_page or urlsplit(next_page).netloc != '':
@@ -39,20 +39,20 @@ def login():
       return redirect(next_page)
    return render_template('login.html', title='Sign In', form=form)
 
-#Route zur Logout Seite
+#Route zur Logout Seite (Quelle: Tutorial Webapplikation mit Flask)
 @app.route('/logout')
 def logout():
    logout_user()
    return redirect(url_for('index'))
 
-#Route zur Registrierung
+#Route zur Registrierung (Quelle: Tutorial Webapplikation mit Flask)
 @app.route('/register', methods=['GET', 'POST'])
 def register():
    if current_user.is_authenticated:
       return redirect(url_for('index'))
    form = RegistrationForm()
    if form.validate_on_submit():
-      # Route /register wurde mit POST betreten. Prüfung, ob alles o.k. ist:
+      # Route /register wurde mit POST betreten. Prüfung, ob alles ok ist:
       user = User(username=form.username.data, email=form.email.data)
       user.set_password(form.password.data)
       db.session.add(user)
@@ -62,12 +62,12 @@ def register():
    # Route /register wurde mit GET betreten
    return render_template('register.html', title='Register', form=form)
 
-#Route zum Benutzerprofil
+#Route zum Benutzerprofil (Quelle: Tutorial Webapplikation mit Flask)
 @app.route('/user/<username>')
 @login_required
 def user(username):
    user = User.query.filter_by(username=username).first_or_404()
-   # Fotos des Benutzers aus der Datenbank abrufen
+   #Fotos des Benutzers aus der Datenbank abrufen
    photos = Photo.query.filter_by(user_id=user.id).all()
    return render_template('user.html', user=user, photos=photos)
 
@@ -80,6 +80,7 @@ def get_file(filename):
 @login_required
 def upload():
    form = UploadForm()
+   #Validierung der Datei vor dem Hochladen und Speicherung der definierten Informationen in der DB, wenn alles ok.
    if form.validate_on_submit():
       filename = photos.save(form.photo.data)
       file_url = url_for('get_file', filename=filename)
@@ -90,13 +91,14 @@ def upload():
       file_url = None
    return render_template('upload.html', form=form, file_url=file_url)
 
+#Route für die Webpage Galerie
 @app.route('/gallery')
 @login_required
 def gallery():
    images = Photo.query.all()
    return render_template("gallery.html", images=images)
 
-#Last_seen abfüllen
+#Last_seen für das Benutzerprofil abfüllen
 @app.before_request
 def before_request():
    if current_user.is_authenticated:
@@ -109,13 +111,13 @@ def before_request():
 @login_required
 def rate_photo_in_gallery(photo_id):
    selected_image = Photo.query.get_or_404(photo_id)
-
+   #Überprüfung, ob Foto bereits bewertet wurde.
    if request.method == 'POST':
       if Rating.query.filter_by(user_id=current_user.id, photo_id=photo_id).first():
          flash_message = 'Du hast dieses Foto bereits bewertet! <a href="{}" class="btn btn-primary">Zurück zur Galerie</a>'.format(url_for('gallery'))
          flash(Markup(flash_message), 'error')
          return redirect(url_for('rate_photo_in_gallery', photo_id=photo_id))
-
+      #Falls noch nicht bewertet wurde, Hinzufügen der Bewertung zur DB.
       rating_value = int(request.form['rating'])
       rating = Rating(user_id=current_user.id, photo_id=photo_id, rating=rating_value)
       db.session.add(rating)
